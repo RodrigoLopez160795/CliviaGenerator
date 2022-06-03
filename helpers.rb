@@ -24,7 +24,7 @@ module Helpers
         puts "Please select a valid ID"
         print ">"
         id = gets.chomp.to_i
-        break if id.between?(9,32)
+        break if id.between?(9,32) || id == 0
         puts "Invalid ID"
         end
         id
@@ -34,6 +34,19 @@ module Helpers
         categories.each do |category|
            return name = category["name"] if category["id"] == id
         end
+    end
+
+    def valid_difficulty
+        difficulty = ""
+        valid_difficulties = ["easy","medium","hard"]
+        loop do
+            print ">"
+            difficulty = gets.chomp.downcase
+            break if valid_difficulties.include?(difficulty)
+            puts "Invalid difficulty"
+        end
+        
+        difficulty
     end
 end
 

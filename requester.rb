@@ -1,9 +1,9 @@
 module Requester
 
   def select_main_menu_action
-    puts "random | scores | exit"
+    puts "Random | Scores | Exit"
     print ">"
-    opt = gets.chomp
+    opt = gets.chomp.downcase
   end
 
   def ask_question(question)

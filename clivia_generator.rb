@@ -1,6 +1,7 @@
 # do not forget to require your gem dependencies
 require_relative "helpers"
 require_relative "requester"
+require_relative "get_question"
 
 class CliviaGenerator
 include Helpers
@@ -31,6 +32,10 @@ include Requester
     id = ask_for_a_category
     category_name = get_category_name(id, categories)
     puts "You selected #{category_name}"
+    puts "Choose a difficulty: Easy | Medium | Hard"
+    difficulty = valid_difficulty
+    ask_questions(id, difficulty)
+
   end
 
   def random_trivia
@@ -38,8 +43,8 @@ include Requester
     # questions are loaded, then let's ask them
   end
 
-  def ask_questions
-    # ask each question
+  def ask_questions(id, difficulty)
+    p question = GetService::Question.get_question(id, difficulty)
     # if response is correct, put a correct message and increase score
     # if response is incorrect, put an incorrect message, and which was the correct answer
     # once the questions end, show user's score and promp to save it
