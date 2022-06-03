@@ -32,6 +32,7 @@ module Helpers
 
     def get_category_name(id, categories)
         categories.each do |category|
+           return name = category["name"] if category["id"] == id
         end
     end
 end
