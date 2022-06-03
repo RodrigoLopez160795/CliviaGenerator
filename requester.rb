@@ -1,6 +1,9 @@
 module Requester
+
   def select_main_menu_action
-    # prompt the user for the "random | scores | exit" actions
+    puts "random | scores | exit"
+    print ">"
+    opt = gets.chomp
   end
 
   def ask_question(question)

@@ -1,17 +1,36 @@
 # do not forget to require your gem dependencies
-# do not forget to require_relative your local dependencies
+require_relative "helpers"
+require_relative "requester"
 
 class CliviaGenerator
-  # maybe we need to include a couple of modules?
-
-  def initialize
-    # we need to initialize a couple of properties here
+include Helpers
+include Requester
+  
+  def initialize(filename = "scores.json")
+    @filename = ARGV.shift || filename
   end
 
   def start
-    # welcome message
-    # prompt the user for an action
-    # keep going until the user types exit
+    opt = ""
+    print_welcome
+    loop do
+      opt = select_main_menu_action
+      case opt
+      when "random" then question
+      when "scores" then puts "Scores"
+      when "exit" then puts "Exit"
+      else puts "Invalid action"
+      end
+      break if opt == "exit"
+    end
+  end
+
+  def question
+    categories = CategoryHash::CATEGORIES
+    puts table_categories("Categories", ["ID","Category"], categories)
+    id = ask_for_a_category
+    category_name = get_category_name(id, categories)
+    puts "You selected #{category_name}"
   end
 
   def random_trivia
