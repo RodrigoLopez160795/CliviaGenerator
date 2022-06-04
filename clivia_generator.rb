@@ -1,13 +1,14 @@
 require "htmlentities"
 require "json"
-require 'colorized_string'
+require "colorized_string"
+require "colorize"
 require_relative "helpers"
 require_relative "requester"
 require_relative "get_question"
 
 class CliviaGenerator
-include Helpers
-include Requester
+  include Helpers
+  include Requester
 
   def initialize(filename = "scores.json")
     @filename = ARGV.shift || filename
@@ -24,8 +25,10 @@ include Requester
       opt = select_main_menu_action
       case opt
       when "random" then question
-      when "scores" then puts table_scores("Top Scores", ["Name","Score"], @scores)
-      when "exit" then puts "Exit"
+      when "scores" then puts table_scores("Top Scores", ["Name", "Score"], @scores)
+      when "exit"
+        puts "Thank you for use Clivia Generator"
+        puts HTMLEntities.new.decode("This program was made by Rodrigo López Alvarado")
       else puts ColorizedString["Invalid action"].colorize(:red)
       end
       break if opt == "exit"
@@ -34,7 +37,7 @@ include Requester
 
   def question
     categories = CategoryHash::CATEGORIES
-    puts table_categories("Categories", ["ID","Category"], categories)
+    puts table_categories("Categories", ["ID", "Category"], categories)
     id = ask_for_a_category
     category_name = get_category_name(id, categories)
     puts "You selected #{category_name}"
@@ -45,7 +48,7 @@ include Requester
     difficulty = valid_difficulty
     questions = load_questions(id, difficulty)
     display_questions(questions, difficulty)
-    puts "-"*50
+    puts "-" * 50
     save_opt = validate_save_answer
     save_opt && save
   end
@@ -60,7 +63,7 @@ include Requester
     questions.each do |question|
       correct_index = 0
       correct_answer = ""
-     
+
       answers = scrambled_answers(question)
       puts HTMLEntities.new.decode(question[:question])
       answers.each_with_index do |answer, index|
@@ -71,14 +74,17 @@ include Requester
         end
       end
       answer_index = validate_answer(question[:type])
-      if answer_index == correct_index
-        @score += increment_score(difficulty)
-        puts ColorizedString["Well done! Your score is #{@score}"].colorize(:light_green)
-      else
-        puts ColorizedString["#{HTMLEntities.new.decode(answers[answer_index - 1])}...Incorrect"].colorize(:red)
-        puts ColorizedString["The correct answer was #{HTMLEntities.new.decode(correct_answer)}"].colorize(:red)
-      end
+      print_result(answer_index, correct_index, answers, correct_answer, difficulty)
+    end
+  end
 
+  def print_result(answer_index, correct_index, answers, correct_answer, difficulty)
+    if answer_index == correct_index
+      @score += increment_score(difficulty)
+      puts ColorizedString["Well done! Your score is #{@score}"].colorize(:light_green)
+    else
+      puts "#{HTMLEntities.new.decode(answers[answer_index - 1])}...Incorrect".colorize(:red)
+      puts "The correct answer was #{HTMLEntities.new.decode(correct_answer)}".colorize(:red)
     end
   end
 
@@ -87,7 +93,7 @@ include Requester
     print ">"
     name = gets.chomp
     name = "Unkown" if name.empty?
-    @players_arr << {name:name, score:@score}
+    @players_arr << { name: name, score: @score }
     File.write(@filename, @players_arr.to_json)
   end
 
@@ -95,7 +101,7 @@ include Requester
     if File.exist?(@filename)
       @players_arr = JSON.parse(File.read(@filename), simbolize_names: true)
       @scores = JSON.parse(File.read(@filename), simbolize_names: true)
-      return
+      nil
     else
       @players_arr = []
       @scores = []
