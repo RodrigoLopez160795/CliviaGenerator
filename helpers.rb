@@ -24,7 +24,7 @@ module Helpers
         puts "Please select a valid ID"
         print ">"
         id = gets.chomp.to_i
-        break if id.between?(9,32) || id == 0
+        break if id.between?(9,32) || id == 1
         puts "Invalid ID"
         end
         id
@@ -48,11 +48,53 @@ module Helpers
         
         difficulty
     end
+
+    def scrambled_answers(question)
+        question[:incorrect_answers] << question[:correct_answer]
+        question[:incorrect_answers].shuffle
+    end
+
+    def validate_answer(type)
+        valid_answers = type == "multiple" ? %w[1 2 3 4] : %w[1 2]
+        answer = ""
+        loop do
+            print ">"
+            answer = gets.chomp
+        break if valid_answers.include?(answer)
+        puts "Invalid answer. Should be a number between 1 and 4" if type == "multiple"
+        puts "Invalid answer. Should be 1 or 2" if type == "boolean"
+        end
+        answer.to_i
+    end
+
+    def increment_score(difficulty)
+    increment = 0
+        case difficulty
+        when "easy" then increment = 10
+        when "medium" then increment = 15
+        when "hard" then increment = 20
+        end
+    increment
+    end
+
+    def validate_save_answer
+        puts "Do you want to save your score? (y/n)"
+        valid_answers = ["yes","y","no","n"]
+        answer = ""
+        loop do
+            print ">"
+            answer = gets.chomp.downcase
+            break if valid_answers.includes?(answer)
+            puts "Invalid answer"
+        end
+        return true if answer == "yes" || answer == "y"
+        false
+    end
 end
 
 module CategoryHash
     CATEGORIES = [
-        {"id" => 0, "name" => "Random category"},
+        {"id" => 1, "name" => "Random category"},
         {"id" => 9, "name" => "General Knowledge"},
         {"id" => 10, "name" => "Entertainment: Books"},
         {"id" => 11, "name" => "Entertainment: Film"},
