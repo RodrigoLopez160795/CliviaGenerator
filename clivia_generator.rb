@@ -1,4 +1,5 @@
 require "htmlentities"
+require "json"
 require_relative "helpers"
 require_relative "requester"
 require_relative "get_question"
@@ -8,14 +9,15 @@ include Helpers
 include Requester
   
   def initialize(filename = "scores.json")
-    @filename = ARGV.shift || 
+    @filename = ARGV.shift || filename
     @score = 0
+    @playes_arr = load_players
   end
 
   def start
     opt = ""
-    print_welcome
     loop do
+      print_welcome
       opt = select_main_menu_action
       case opt
       when "random" then question
@@ -48,6 +50,7 @@ include Requester
   end
 
   def display_questions(questions, difficulty)
+    @score = 0
     questions.each do |question|
       correct_index = 0
       correct_answer = ""
@@ -77,10 +80,16 @@ include Requester
     puts "Type the name to assign to the score"
     print ">"
     name = gets.chomp
+    @players_arr << {name:name, score:@score}
+    File.write(@filename, @players_arr.to_json)
   end
 
-  def parse_scores
-    # get the scores data from file
+  def load_players
+    if File.exist?(@filename)
+      players = File.read(@filename)
+      return JSON.parse(@players, simbolize_names: true)
+    end
+    @players_arr = []
   end
 
   def parse_questions

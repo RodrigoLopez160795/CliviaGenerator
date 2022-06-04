@@ -84,7 +84,7 @@ module Helpers
         loop do
             print ">"
             answer = gets.chomp.downcase
-            break if valid_answers.includes?(answer)
+            break if valid_answers.include?(answer)
             puts "Invalid answer"
         end
         return true if answer == "yes" || answer == "y"
