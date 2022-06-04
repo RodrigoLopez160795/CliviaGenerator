@@ -1,5 +1,6 @@
 require "htmlentities"
 require "json"
+require 'colorized_string'
 require_relative "helpers"
 require_relative "requester"
 require_relative "get_question"
@@ -7,7 +8,7 @@ require_relative "get_question"
 class CliviaGenerator
 include Helpers
 include Requester
-  
+
   def initialize(filename = "scores.json")
     @filename = ARGV.shift || filename
     @score = 0
@@ -25,7 +26,7 @@ include Requester
       when "random" then question
       when "scores" then puts table_scores("Top Scores", ["Name","Score"], @scores)
       when "exit" then puts "Exit"
-      else puts "Invalid action"
+      else puts ColorizedString["Invalid action"].colorize(:red)
       end
       break if opt == "exit"
     end
@@ -37,7 +38,10 @@ include Requester
     id = ask_for_a_category
     category_name = get_category_name(id, categories)
     puts "You selected #{category_name}"
-    puts "Choose a difficulty: Easy | Medium | Hard"
+    easy = ColorizedString["Easy"].colorize(:light_green)
+    medium = ColorizedString["Medium"].colorize(:green)
+    hard = ColorizedString["Hard"].colorize(:red)
+    puts "Choose a difficulty: #{easy} | #{medium} | #{hard}"
     difficulty = valid_difficulty
     questions = load_questions(id, difficulty)
     display_questions(questions, difficulty)
@@ -69,10 +73,10 @@ include Requester
       answer_index = validate_answer(question[:type])
       if answer_index == correct_index
         @score += increment_score(difficulty)
-        puts "Well done! Your score is #{@score}"
+        puts ColorizedString["Well done! Your score is #{@score}"].colorize(:light_green)
       else
-        puts "#{HTMLEntities.new.decode(answers[answer_index - 1])}...Incorrect"
-        puts "The correct answer was #{HTMLEntities.new.decode(correct_answer)}"
+        puts ColorizedString["#{HTMLEntities.new.decode(answers[answer_index - 1])}...Incorrect"].colorize(:red)
+        puts ColorizedString["The correct answer was #{HTMLEntities.new.decode(correct_answer)}"].colorize(:red)
       end
 
     end
@@ -82,6 +86,7 @@ include Requester
     puts "Type the name to assign to the score"
     print ">"
     name = gets.chomp
+    name = "Unkown" if name.empty?
     @players_arr << {name:name, score:@score}
     File.write(@filename, @players_arr.to_json)
   end

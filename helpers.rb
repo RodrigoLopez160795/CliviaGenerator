@@ -1,4 +1,5 @@
 require "terminal-table"
+require 'colorize'
 
 module Helpers
 
@@ -37,7 +38,7 @@ module Helpers
         print ">"
         id = gets.chomp.to_i
         break if id.between?(9,32) || id == 1
-        puts "Invalid ID"
+        puts "Invalid ID".colorize(:red)
         end
         id
     end
@@ -55,7 +56,7 @@ module Helpers
             print ">"
             difficulty = gets.chomp.downcase
             break if valid_difficulties.include?(difficulty)
-            puts "Invalid difficulty"
+            puts "Invalid difficulty".colorize(:red)
         end
         
         difficulty
@@ -73,8 +74,8 @@ module Helpers
             print ">"
             answer = gets.chomp
         break if valid_answers.include?(answer)
-        puts "Invalid answer. Should be a number between 1 and 4" if type == "multiple"
-        puts "Invalid answer. Should be 1 or 2" if type == "boolean"
+        puts "Invalid answer. Should be a number between 1 and 4".colorize(:red) if type == "multiple"
+        puts "Invalid answer. Should be 1 or 2".colorize(:red) if type == "boolean"
         end
         answer.to_i
     end
@@ -97,7 +98,7 @@ module Helpers
             print ">"
             answer = gets.chomp.downcase
             break if valid_answers.include?(answer)
-            puts "Invalid answer"
+            puts "Invalid answer".colorize(:red)
         end
         return true if answer == "yes" || answer == "y"
         false
