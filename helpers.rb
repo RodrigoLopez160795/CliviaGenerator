@@ -18,6 +18,18 @@ module Helpers
         table
     end
 
+    def table_scores(title, headings, scores)
+        table = Terminal::Table.new
+        table.title = title
+        table.headings = headings
+        scores.sort_by!{|e| e["score"]}
+        scores.reverse!
+        table.rows = scores.map do |row|
+            [row["name"], row["score"]]
+        end
+        table
+    end
+
     def ask_for_a_category
         id = ""
         loop do 

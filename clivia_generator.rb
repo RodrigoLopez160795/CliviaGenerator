@@ -11,17 +11,19 @@ include Requester
   def initialize(filename = "scores.json")
     @filename = ARGV.shift || filename
     @score = 0
-    @playes_arr = load_players
+    @playes_arr = []
+    @scores = []
   end
 
   def start
+    load_players
     opt = ""
     loop do
       print_welcome
       opt = select_main_menu_action
       case opt
       when "random" then question
-      when "scores" then puts "Scores"
+      when "scores" then puts table_scores("Top Scores", ["Name","Score"], @scores)
       when "exit" then puts "Exit"
       else puts "Invalid action"
       end
@@ -86,10 +88,13 @@ include Requester
 
   def load_players
     if File.exist?(@filename)
-      players = File.read(@filename)
-      return JSON.parse(@players, simbolize_names: true)
+      @players_arr = JSON.parse(File.read(@filename), simbolize_names: true)
+      @scores = JSON.parse(File.read(@filename), simbolize_names: true)
+      return
+    else
+      @players_arr = []
+      @scores = []
     end
-    @players_arr = []
   end
 
   def parse_questions
